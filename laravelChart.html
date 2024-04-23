@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	 
+
+    <style>
+      /* Add custom CSS for borders and spacing */
+      .col-bordered {
+        border: 1px solid #ddd; /* Add border */
+        padding: 15px; /* Add spacing */
+      }
+
+      /* below css for second column pie like chart */
+
+      .pie-chart-container {
+        /* position: relative;
+        width: 400px;
+        height: 400px; */
+      }
+      canvas {
+        z-index: 1;
+      }
+      .carousel-item {
+        text-align: center;
+      }
+      #chart-title {
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+      #subtitle {
+        font-size: 16px;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .carousel-indicators {
+        bottom: -40px;
+      }
+      .col-sm-2 {
+        width: 20%;
+      }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="jumbotron text-center">
+      <h1>My First Bootstrap Page</h1>
+      <p>Resize this responsive page to see the effect!</p>
+    </div>
+
+    <div class="container">
+      <!-- <button onclick="showDataset(myChart, 0)">Point 1</button>
+      <button onclick="showDataset(myChart, 1)">Point 2</button>
+      <button onclick="resetChart(myChart)">Reset</button> -->
+      <div class="row">
+        <div class="col-sm-2 col-bordered">
+          <div style="position: relative">
+            <canvas id="myChart"></canvas>
+          </div>
+		  <button onclick="showDataset(myChart, 0)">Point 1</button>
+      <button onclick="showDataset(myChart, 1)">Point 2</button>
+      <button onclick="resetChart(myChart)">Reset</button>
+        </div>
+		
+		
+		
+        <!-- put column 2 here -->
+		
+		 <div class="col-sm-2 col-bordered">
+          <!-- Add col-bordered class -->
+          <div
+            id="carouselExampleIndicators"
+            class="carousel slide"
+            data-ride="carousel"
+          >
+            <div class="carousel-inner">
+              <div class="item active">
+                <div class="pie-chart-container">
+                  <canvas id="myCanvas1" width="" height=""></canvas>
+                  <div class="chart-label">76%</div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="pie-chart-container">
+                  <canvas id="myCanvas2" width="" height=""></canvas>
+                  <div class="chart-label">78%</div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="pie-chart-container">
+                  <canvas id="myCanvas3" width="" height=""></canvas>
+                  <div class="chart-label">87%</div>
+                </div>
+              </div>
+            </div>
+            <a
+              class="left carousel-control"
+              href="#carouselExampleIndicators"
+              role="button"
+              data-slide="prev"
+            >
+              <span class="glyphicon glyphicon-chevron-left"></span>
+            </a>
+            <a
+              class="right carousel-control"
+              href="#carouselExampleIndicators"
+              role="button"
+              data-slide="next"
+            >
+              <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+            <ol class="carousel-indicators">
+              <li
+                data-target="#carouselExampleIndicators"
+                data-slide-to="0"
+                class="active"
+              ></li>
+              <li
+                data-target="#carouselExampleIndicators"
+                data-slide-to="1"
+              ></li>
+              <li
+                data-target="#carouselExampleIndicators"
+                data-slide-to="2"
+              ></li>
+            </ol>
+          </div>
+        </div>
+		
+		
+		
+		
+        <div class="col-sm-2 col-bordered">
+          <canvas id="myChart3" width="" height=""></canvas>
+        </div>
+        <div class="col-sm-2 col-bordered">
+          <canvas id="myChart4" width="" height=""></canvas>
+        </div>
+        <div class="col-sm-2 col-bordered">
+          <canvas id="myChart5" width="" height=""></canvas>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Set the canvas height to match the column height
+      function setCanvasHeight() {
+        var canvas = document.querySelectorAll("canvas");
+        var column = document.querySelector(".col-sm-2");
+        var columnStyles = window.getComputedStyle(column);
+        var height = parseInt(columnStyles.height, 10);
+        canvas.forEach((element) => {
+          element.width = column.offsetWidth;
+          element.height = height;
+        });
+      }
+
+      // Call the function initially and on window resize
+      setCanvasHeight();
+      window.addEventListener("resize", setCanvasHeight);
+
+      // Initialize the Bootstrap carousel
+      $(document).ready(function () {
+        $('#carouselExampleIndicators').carousel();
+      });
+
+      // Chart 1
+      var ctx = document.getElementById("myChart").getContext("2d");
+      var myChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: [
+            "15 April",
+            "16 April",
+            "17 April",
+            "18 April",
+            "19 April",
+            "20 April",
+            "21 April",
+          ],
+          datasets: [
+            {
+              label: "Point 1",
+              data: [250, 375, 400, 425, 450, 475, 500],
+              borderWidth: 1,
+              borderColor: "maroon",
+              backgroundColor: "rgba(176, 58, 46, 0.2)", // Maroon background color
+              fill: "origin", // Fill area below the dataset
+              hidden: false, // Initially visible
+            },
+            {
+              label: "Point 2",
+              data: [250, 475, 450, 425, 400, 375, 500],
+              borderWidth: 1,
+              borderColor: "blue",
+              backgroundColor: "rgba(46, 73, 176, 0.2)", // Blue background color
+              fill: "origin", // Fill area below the dataset
+              hidden: false, // Initially visible
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          layout: {
+            padding: {
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+            },
+          },
+          tooltips: {
+            enabled: true,
+            backgroundColor: "green",
+            titleFontFamily: "Comic Sans MS",
+            titleFontSize: 30,
+            titleFontStyle: "bold italic",
+            titleFontColor: "yellow",
+            titleAlign: "center",
+            titleSpacing: 3,
+            titleMarginBottom: 50,
+            bodyFontFamily: "Comic Sans MS",
+            bodyFontSize: 20,
+            bodyFontStyle: "italic",
+            bodyFontColor: "black",
+            bodyAlign: "center",
+            bodySpacing: 3,
+          },
+          title: {
+            display: true,
+            text: "Custom Chart Title",
+            fontSize: 25,
+            position: "bottom",
+            fontFamily: "Comic Sans MS",
+            fontColor: "red",
+            fontStyle: "bold italic",
+            padding: 20,
+            lineHeight: 5,
+          },
+          legend: {
+            display: true,
+            position: "bottom",
+            align: "end",
+            labels: {
+              fontSize: 16,
+              fontColor: "red",
+              boxWidth: 20,
+            },
+          },
+        },
+      });
+	  
+	  // chart 2 column 2 starts 
+	  
+	  const colors = ['#ff6384', '#36a2eb', '#ffce56']; // Adjust colors based on your data
+        const data = [76, 78, 87]; // Adjust data values based on your data
+
+        function drawPieChart(canvasId, percentage) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(centerX, centerY);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const sliceAngle = (2 * Math.PI * percentage) / 100;
+            const startAngle = -0.5 * Math.PI;
+            const endAngle = startAngle + sliceAngle;
+
+            // Draw pie slice
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+            ctx.fillStyle = colors[0]; // Change color as needed
+            ctx.fill();
+
+            // Draw inner circle
+            const innerRadius = radius * 0.6;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, innerRadius, 0, 2 * Math.PI);
+            ctx.fillStyle = '#fff'; // Change color as needed
+            ctx.fill();
+
+            // Draw percentage text
+            ctx.font = 'bold 30px Arial';
+            ctx.fillStyle = '#000'; // Change color as needed
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(percentage + '%', centerX, centerY);
+        }
+
+        function updatePieChart(index) {
+            drawPieChart(`myCanvas${index + 1}`, data[index]);
+            document.querySelector(`.chart-label`).innerText = data[index] + '%';
+        }
+
+        updatePieChart(0); // Draw initial chart
+
+        // Handle carousel slide event
+        $('#carouselExampleIndicators').on('slide.bs.carousel', function (e) {
+            const slideIndex = e.to;
+            updatePieChart(slideIndex);
+        });
+		
+		// Initialize the Bootstrap carousel
+  $(document).ready(function () {
+    $('#carouselExampleIndicators').carousel();
+  });
+	  
+	  
+
+      // Chart 3
+      var ctx = document.getElementById("myChart3").getContext("2d");
+      var myChart3 = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: ["M", "T", "W", "T", "F", "S", "S"],
+          datasets: [
+            {
+              label: "Point 1",
+              data: [250, 375, 400, 425, 450, 475, 500],
+              borderWidth: 1,
+              borderColor: "maroon",
+              backgroundColor: "rgba(176, 58, 46, 0.2)", // Maroon background color
+              fill: "origin", // Fill area below the dataset
+              hidden: false, // Initially visible
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          layout: {
+            padding: {
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+            },
+          },
+          tooltips: {
+            enabled: true,
+            backgroundColor: "green",
+            titleFontFamily: "Comic Sans MS",
+            titleFontSize: 30,
+            titleFontStyle: "bold italic",
+            titleFontColor: "yellow",
+            titleAlign: "center",
+            titleSpacing: 3,
+            titleMarginBottom: 50,
+            bodyFontFamily: "Comic Sans MS",
+            bodyFontSize: 20,
+            bodyFontStyle: "italic",
+            bodyFontColor: "black",
+            bodyAlign: "center",
+            bodySpacing: 3,
+          },
+          title: {
+            display: true,
+            text: "Custom Chart Title",
+            fontSize: 25,
+            position: "bottom",
+            fontFamily: "Comic Sans MS",
+            fontColor: "red",
+            fontStyle: "bold italic",
+            padding: 20,
+            lineHeight: 5,
+          },
+          legend: {
+            display: true,
+            position: "bottom",
+            align: "end",
+            labels: {
+              fontSize: 16,
+              fontColor: "red",
+              boxWidth: 20,
+            },
+          },
+        },
+      });
+
+      // Chart 4
+      var ctx = document.getElementById("myChart4").getContext("2d");
+      var myChart4 = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["Jan", "Feb", "March", "April", "May", "Jun", "July"],
+          datasets: [
+            {
+              label: "Point 1",
+              data: [250, 375, 400, 425, 450, 475, 500],
+              borderWidth: 1,
+              borderColor: "maroon",
+              backgroundColor: "rgba(176, 58, 46, 0.2)", // Maroon background color
+              fill: "origin", // Fill area below the dataset
+              hidden: false, // Initially visible
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          layout: {
+            padding: {
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+            },
+          },
+          tooltips: {
+            enabled: true,
+            backgroundColor: "green",
+            titleFontFamily: "Comic Sans MS",
+            titleFontSize: 30,
+            titleFontStyle: "bold italic",
+            titleFontColor: "yellow",
+            titleAlign: "center",
+            titleSpacing: 3,
+            titleMarginBottom: 50,
+            bodyFontFamily: "Comic Sans MS",
+            bodyFontSize: 20,
+            bodyFontStyle: "italic",
+            bodyFontColor: "black",
+            bodyAlign: "center",
+            bodySpacing: 3,
+          },
+          title: {
+            display: true,
+            text: "Custom Chart Title",
+            fontSize: 25,
+            position: "bottom",
+            fontFamily: "Comic Sans MS",
+            fontColor: "red",
+            fontStyle: "bold italic",
+            padding: 20,
+            lineHeight: 5,
+          },
+          legend: {
+            display: true,
+            position: "bottom",
+            align: "end",
+            labels: {
+              fontSize: 16,
+              fontColor: "red",
+              boxWidth: 20,
+            },
+          },
+        },
+      });
+
+      // Add line dataset to Chart 4
+      myChart4.data.datasets.push({
+        label: "Line Dataset",
+        data: [200, 300, 350, 400, 450, 475, 480], // Example data
+        borderColor: "blue",
+        backgroundColor: "rgba(0, 0, 255, 0.2)",
+        type: "line", // Set dataset type to line
+        order: 2, // Make sure it's above the bar dataset
+      });
+
+      // Update chart 4
+      myChart4.update();
+	  
+	  
+
+      // Chart 5
+      var ctx = document.getElementById("myChart5").getContext("2d");
+      var myChart5 = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: [
+            "15 April",
+            "16 April",
+            "17 April",
+            "18 April",
+            "19 April",
+            "20 April",
+            "21 April",
+          ],
+          datasets: [
+            {
+              label: "Point 1",
+              data: [250, 375, 400, 425, 450, 475, 500],
+              borderWidth: 1,
+              borderColor: "maroon",
+              backgroundColor: "rgba(176, 58, 46, 0.2)", // Maroon background color
+              fill: "origin", // Fill area below the dataset
+              hidden: false, // Initially visible
+            },
+            {
+              label: "Point 2",
+              data: [250, 475, 450, 425, 400, 375, 500],
+              borderWidth: 1,
+              borderColor: "blue",
+              backgroundColor: "rgba(46, 73, 176, 0.2)", // Blue background color
+              fill: "origin", // Fill area below the dataset
+              hidden: false, // Initially visible
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          layout: {
+            padding: {
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+            },
+          },
+          tooltips: {
+            enabled: true,
+            backgroundColor: "green",
+            titleFontFamily: "Comic Sans MS",
+            titleFontSize: 30,
+            titleFontStyle: "bold italic",
+            titleFontColor: "yellow",
+            titleAlign: "center",
+            titleSpacing: 3,
+            titleMarginBottom: 50,
+            bodyFontFamily: "Comic Sans MS",
+            bodyFontSize: 20,
+            bodyFontStyle: "italic",
+            bodyFontColor: "black",
+            bodyAlign: "center",
+            bodySpacing: 3,
+          },
+          title: {
+            display: true,
+            text: "Custom Chart Title",
+            fontSize: 25,
+            position: "bottom",
+            fontFamily: "Comic Sans MS",
+            fontColor: "red",
+            fontStyle: "bold italic",
+            padding: 20,
+            lineHeight: 5,
+          },
+          legend: {
+            display: true,
+            position: "bottom",
+            align: "end",
+            labels: {
+              fontSize: 16,
+              fontColor: "red",
+              boxWidth: 20,
+            },
+          },
+        },
+      });
+
+      // Function to show dataset in Chart 1
+      function showDataset(chart, datasetIndex) {
+        // Hide all datasets
+        for (var i = 0; i < chart.data.datasets.length; i++) {
+          chart.data.datasets[i].hidden = true;
+        }
+        // Show the selected dataset
+        chart.data.datasets[datasetIndex].hidden = false;
+        chart.update();
+      }
+
+      // Function to reset Chart 1
+      function resetChart(chart) {
+        // Show all datasets
+        for (var i = 0; i < chart.data.datasets.length; i++) {
+          chart.data.datasets[i].hidden = false;
+        }
+        chart.update();
+      }
+    </script>
+  </body>
+</html>
